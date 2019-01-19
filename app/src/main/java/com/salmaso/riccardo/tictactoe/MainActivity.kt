@@ -21,9 +21,31 @@ class MainActivity : AppCompatActivity() {
         val numList2 = arrayOf(1,2,3,4,5)
         mathOnList(numList2, multiply2)
 
-        btnSinglePlayer.setOnClickListener{
+        btnEasy.setOnClickListener{
             val intent = Intent(this, GameActivity::class.java)
             intent.putExtra("singlePlayer",true)
+            intent.putExtra("difficult",0)
+            startActivity(intent)
+        }
+
+        btnMedium.setOnClickListener{
+            val intent = Intent(this, GameActivity::class.java)
+            intent.putExtra("singlePlayer",true)
+            intent.putExtra("difficult",1)
+            startActivity(intent)
+        }
+
+        btnImpossible.setOnClickListener{
+            val intent = Intent(this, GameActivity::class.java)
+            intent.putExtra("singlePlayer",true)
+            intent.putExtra("difficult",2)
+            startActivity(intent)
+        }
+
+        btnMixed.setOnClickListener{
+            val intent = Intent(this, GameActivity::class.java)
+            intent.putExtra("singlePlayer",true)
+            intent.putExtra("difficult",-1)
             startActivity(intent)
         }
 

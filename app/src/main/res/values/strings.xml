@@ -1,7 +1,13 @@
 <resources>
     <string name="app_name">TicTacToe</string>
     <string name="single_player">Single Player</string>
+    <string name="easy">Easy</string>
+    <string name="medium">Medium</string>
+    <string name="impossible">Impossible</string>
+    <string name="mixed">Mixed</string>
+
     <string name="multiplayer">Multiplayer</string>
     <string name="x">X</string>
     <string name="O">O</string>
+    <string name="xo">XO</string>
 </resources>

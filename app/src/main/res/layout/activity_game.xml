@@ -8,6 +8,7 @@
     android:id="@+id/layout1"
     android:baselineAligned="false"
     android:orientation="vertical"
+    android:background="@color/background"
     >
     <LinearLayout
         android:layout_width="match_parent"
@@ -16,16 +17,22 @@
         android:padding="10dp"
         >
         <RelativeLayout
+            android:id="@+id/rl_score_x"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:background="@drawable/my_border_x"
+            android:padding="5dp"
+            android:layout_marginRight="5dp"
             >
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/x"
                 android:textSize="27sp"
-                android:layout_alignParentLeft="true"
+                android:textColor="@color/orange"
+                android:gravity="center"
+                android:layout_marginTop="-3dp"
                 />
             <TextView
                 android:id="@+id/tvX"
@@ -33,37 +40,70 @@
                 android:layout_height="wrap_content"
                 android:textSize="27sp"
                 android:hint="0"
+                android:textColor="@color/orange"
+                android:layout_marginTop="-3dp"
                 android:layout_alignParentRight="true"
 
                 />
         </RelativeLayout>
 
-        <View
+        <RelativeLayout
+            android:id="@+id/rl_score_xo"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            />
+            android:background="@drawable/my_border_xo"
+            android:padding="5dp"
+            android:layout_marginRight="5dp"
+            >
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/xo"
+                android:textSize="27sp"
+                android:textColor="@color/white"
+                android:layout_marginTop="-3dp"
+                />
+
+            <TextView
+                android:id="@+id/tvDraw"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="0dp"
+                android:layout_marginTop="-3dp"
+                android:gravity="end"
+                android:textColor="@color/white"
+                android:layout_alignParentRight="true"
+                android:textSize="27sp"/>
+        </RelativeLayout>
 
         <RelativeLayout
+            android:id="@+id/rl_score_o"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:background="@drawable/my_border_o"
+            android:padding="5dp"
             >
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/O"
                 android:textSize="27sp"
-                android:layout_alignParentLeft="true"
+                android:textColor="@color/greenLight"
+                android:layout_marginTop="-3dp"
                 />
+
             <TextView
                 android:id="@+id/tvO"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="27sp"
-                android:hint="0"
+                android:layout_marginStart="0dp"
+                android:layout_marginTop="-3dp"
+                android:gravity="end"
+                android:textColor="@color/greenLight"
                 android:layout_alignParentRight="true"
-                />
+                android:textSize="27sp"/>
         </RelativeLayout>
     </LinearLayout>
     <RelativeLayout

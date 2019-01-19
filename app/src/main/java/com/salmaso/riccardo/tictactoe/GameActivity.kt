@@ -2,16 +2,16 @@ package com.salmaso.riccardo.tictactoe
 
 import android.content.Intent
 import android.content.res.Resources
+import android.graphics.Color
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.support.v4.content.ContextCompat
 import android.view.View
 import android.widget.RelativeLayout
 import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_game.*
 import android.widget.LinearLayout
-
-
-
+import java.util.*
 
 
 class GameActivity : AppCompatActivity(), View.OnClickListener {
@@ -26,10 +26,12 @@ class GameActivity : AppCompatActivity(), View.OnClickListener {
     var xFirst = false
     var playerX = 0
     var playerO = 0
+    var draw    = 0
     var gameFinished = false
     var arrayCamp = IntArray(9) { i -> 0 }
     var singlePlayer = true
     var widthDisplay : Float = 0f
+    var difficultRandom = false
 
     val arrayCheck : Array<Int> = arrayOf(
         20,2,10,0,1,11
@@ -53,13 +55,15 @@ class GameActivity : AppCompatActivity(), View.OnClickListener {
                     arrayOf(0,3,6),
                     arrayOf(0,4),
                     arrayOf(0,5,7),
-                    arrayOf(3,1),
-                    arrayOf(6,4,7,1),
-                    arrayOf(5,1),
-                    arrayOf(3,7,2),
-                    arrayOf(4,2),
-                    arrayOf(5,2,6)
+                    arrayOf(1,3),
+                    arrayOf(1,4,6,7),
+                    arrayOf(1,5),
+                    arrayOf(2,3,7),
+                    arrayOf(2,4),
+                    arrayOf(2,5,6)
             )
+
+    var difficult: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -69,6 +73,16 @@ class GameActivity : AppCompatActivity(), View.OnClickListener {
         xFirst = intent.getBooleanExtra("xFirst",true)
         playerX = intent.getIntExtra("playerX",0)
         playerO = intent.getIntExtra("playerO",0)
+        draw    = intent.getIntExtra("draw",0)
+        difficult = intent.getIntExtra("difficult", 0)
+
+        if(difficult == -1){
+            difficultRandom = true
+            difficult = Random().nextInt(3)
+        }
+
+        Toast.makeText(this, "Difficult: " + difficult, Toast.LENGTH_SHORT).show()
+
 
         square1.setOnClickListener(this)
         square2.setOnClickListener(this)
@@ -79,7 +93,6 @@ class GameActivity : AppCompatActivity(), View.OnClickListener {
         square7.setOnClickListener(this)
         square8.setOnClickListener(this)
         square9.setOnClickListener(this)
-
 
         widthDisplay = Resources.getSystem().getDisplayMetrics().widthPixels.toFloat()
         println("widthDisplay: " + widthDisplay)
@@ -93,8 +106,17 @@ class GameActivity : AppCompatActivity(), View.OnClickListener {
 
         rl_camp.addView(CanvasDraw.DrawCamp1(this, rl_camp, widthDisplay))
 
-        tvX.text = playerX.toString()
-        tvO.text = playerO.toString()
+        tvX.text = if (playerX == 0) "-" else playerX.toString()
+        tvO.text = if (playerO == 0) "-" else playerO.toString()
+        tvDraw.text = if (draw == 0) "-" else draw.toString()
+
+        if (!xFirst) {
+            rl_score_x.setBackgroundResource(R.color.background)
+            rl_score_o.setBackgroundResource(R.drawable.my_border_o)
+        } else {
+            rl_score_o.setBackgroundResource(R.color.background)
+            rl_score_x.setBackgroundResource(R.drawable.my_border_x)
+        }
 
         if(singlePlayer && !xFirst){
             addXorO(square1)
@@ -127,6 +149,9 @@ when (v.id) {
             intent.putExtra("xFirst",!xFirst)
             intent.putExtra("playerX",playerX)
             intent.putExtra("playerO",playerO)
+            intent.putExtra("draw",draw)
+            if(difficultRandom) intent.putExtra("difficult", -1)
+            else intent.putExtra("difficult", difficult)
 
             startActivity(intent)
             overridePendingTransition(0, 0)
@@ -150,51 +175,101 @@ when (v.id) {
                     val result = checkRow(matrixCheck[index][i]);
                     if (result == 3 || result == 30 ||
                             (i+1 == matrixCheck[index].size && turn == 9)) {
-                        var mex = "Ha vinto player ";
+                        var mex = "Player ";
+                        var color = -1
                         if (result == 3) {
                             ++playerX
-                            mex += "X"
+                            color = ContextCompat.getColor(this, R.color.orangeDark)
+                            mex += "X won"
                         } else if (result == 30) {
+                            color = ContextCompat.getColor(this, R.color.greenDark)
                             ++playerO
-                            mex += "O"
+                            mex += "O won"
                         } else if (turn == 9) {
-                            mex = "Pareggio"
+                            ++draw
+                            mex = "Draw"
                         }
-                        tvX.text = playerX.toString()
-                        tvO.text = playerO.toString()
+                        if(color != -1){
+                            val array = matrixSinglePlayer[matrixCheck[index][i]]
+                            for (i in 0..2){
+                                val id = resources.getIdentifier("square" + (array[i]+1), "id", getPackageName())
+                                (findViewById<View>(id)).setBackgroundColor(color)
+                            }
+                        }
+                        tvX.text = if (playerX == 0) "-" else playerX.toString()
+                        tvO.text = if (playerO == 0) "-" else playerO.toString()
+                        tvDraw.text = if (draw == 0) "-" else draw.toString()
+
                         gameFinished = true
+
+
                         Toast.makeText(this, mex, Toast.LENGTH_SHORT).show()
                         break
                     }
                     i++
                 }
-                if(singlePlayer && xTurn && !gameFinished && turn < 9){
-                    var i = 0
-                    var result : Int = -1
-                    var nCheck = 0
-                    while(1==1) {
-                        i=0
-                        while (i < arrCheckSum.size) {
-                            if(arrCheckSum[i] == arrayCheck[nCheck]) {
-                                result = i
-                            }
-                            i++
-                        }
-                        if (result != -1) {
-                            val array = matrixSinglePlayer[result]
-                            for(index in 0..2){
-                                if(arrayCamp[array[index]] == 0){
-                                    val res = resources
-                                    val id = res.getIdentifier("square"+(array[index]+1), "id", getPackageName())
-                                    addXorO(findViewById<View>(id))
-                                    break
-                                }
-                            }
-                            return
-                        }
-                        nCheck++
+                if(!gameFinished) {
+                    if (xTurn) {
+                        rl_score_x.setBackgroundResource(R.color.background)
+                        rl_score_o.setBackgroundResource(R.drawable.my_border_o)
+                    } else {
+                        rl_score_o.setBackgroundResource(R.color.background)
+                        rl_score_x.setBackgroundResource(R.drawable.my_border_x)
                     }
-
+                    if (singlePlayer && xTurn && turn < 9) {
+                        if(difficult == 2 && turn == 1 /*&&
+                                arrayCamp[0] + arrayCamp[2] + arrayCamp[6] + arrayCamp[8] == 1*/){
+                            val id = resources.getIdentifier("square" + 5, "id", getPackageName())
+                            addXorO(findViewById<View>(id))
+                        } else {
+                            var i = 0
+                            var result: Int = -1
+                            var nCheck = 0
+                            val arrayChecksOrder: Array<Int>
+                            if (difficult > 0) {
+                                arrayChecksOrder = arrayOf(0, 2, 1)
+                            } else {
+                                arrayChecksOrder = arrayOf(0, 1, 2)
+                            }
+                            while (1 == 1) {
+                                i = 0
+                                while (i < arrCheckSum.size) {
+                                    if (arrCheckSum[i] == arrayCheck[nCheck]) {
+                                        result = i
+                                        if(difficult == 2) break
+                                    }
+                                    i++
+                                }
+                                if (result != -1) {
+                                    val array = matrixSinglePlayer[result]
+                                    for (index in 0..2) {
+                                        if (arrayCamp[array[arrayChecksOrder[index]]] == 0) {
+                                            var pos = array[arrayChecksOrder[index]];
+                                            if(difficult == 2 && turn==3){
+                                                if(arrayCamp[5] + arrayCamp[7] == 2) {
+                                                    pos = 8
+                                                } else if(arrayCamp[2] + arrayCamp[3] == 2 ||
+                                                        arrayCamp[1] + arrayCamp[6] == 2) {
+                                                    pos = 0
+                                                } else if(arrayCamp[0] + arrayCamp[5] == 2){
+                                                    pos = 2
+                                                }
+                                            }
+                                            val res = resources
+                                            val id = res.getIdentifier(
+                                                    "square" + (pos + 1),
+                                                    "id",
+                                                    getPackageName())
+                                            addXorO(findViewById<View>(id))
+                                            break
+                                        }
+                                    }
+                                    return
+                                }
+                                nCheck++
+                            }
+                        }
+                    }
                 }
             }
         }
