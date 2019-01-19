@@ -3,7 +3,6 @@ package com.salmaso.riccardo.tictactoe
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Canvas
-import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.RectF
 import android.support.v4.content.ContextCompat
@@ -15,8 +14,10 @@ class CanvasDraw{
     class DrawX(context: Context,
                   val layout: RelativeLayout,
                   val startX: Float,
-                  val nLine: Int) : View(context) {
-        val startY = startX - ( 300  * nLine)
+                  val nLine: Int,
+                  val size: Float
+                ) : View(context) {
+        val startY = startX - ( size  * nLine)
         var endX = startX
         var endY = startY
 
@@ -27,7 +28,7 @@ class CanvasDraw{
             paint.setStrokeWidth(15f)
             paint.color = ContextCompat.getColor(context, R.color.orange)
             canvas.drawLine(startX, startY, endX, endY, paint)
-            if (endY < 300f + startY) { // set end points
+            if (endY < size + startY) { // set end points
                 endY+=60
                 if(nLine == 0)
                     endX+=60
@@ -35,18 +36,20 @@ class CanvasDraw{
                     endX-=60
                 postInvalidate() // set time here
             } else if(nLine == 0){
-                endY = startX + 300f
+                endY = startX + size
                 layout.addView(DrawX(context,
                         layout,
                         endY,
-                        1
+                        1,
+                        size
                 ))
             }
         }
     }
 
     class DrawCircle(context: Context,
-                       val margin: Float) : View(context) {
+                     val margin: Float,
+                     val size: Float) : View(context) {
         var angle = 0f;
 
         @SuppressLint("DrawAllocation")
@@ -54,7 +57,7 @@ class CanvasDraw{
             val paint = Paint()
             paint.setStrokeWidth(15f)
             paint.color = ContextCompat.getColor(context, R.color.greenLight)
-            val rectF = RectF(margin, margin, 400f, 400f)
+            val rectF = RectF(margin, margin, size, size)
             paint.style = Paint.Style.STROKE
             canvas.drawArc(rectF, 0f, angle, false, paint)
             if (angle != 360f) {

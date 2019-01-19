@@ -2,7 +2,6 @@ package com.salmaso.riccardo.tictactoe
 
 import android.content.Intent
 import android.content.res.Resources
-import android.graphics.Color
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v4.content.ContextCompat
@@ -159,15 +158,16 @@ when (v.id) {
         } else {
             val index: Int = v.tag.toString().toInt()
             val xTurn= (turn % 2 == 0 && xFirst) || (turn % 2 != 0 && !xFirst)
-            val startX: Float = ((widthDisplay/3) - 300) / 2f
+            val size = (widthDisplay/3)/1.6f
+            val startX: Float = ((widthDisplay/3) - size) / 2f
             println("Float: " + startX)
             if (arrayCamp[index] == 0) {
                 if (xTurn) {
                     arrayCamp[index] = 1
-                    (v as RelativeLayout).addView(CanvasDraw.DrawX(this, v, startX, 0))
+                    (v as RelativeLayout).addView(CanvasDraw.DrawX(this, v, startX, 0, size))
                 } else {
                     arrayCamp[index] = 10
-                    (v as RelativeLayout).addView(CanvasDraw.DrawCircle(this, startX))
+                    (v as RelativeLayout).addView(CanvasDraw.DrawCircle(this, startX, size/0.77f))
                 }
                 turn++
                 var i: Int = 0
