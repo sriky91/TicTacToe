@@ -2,15 +2,19 @@ package com.salmaso.riccardo.tictactoe
 
 import android.content.Intent
 import android.content.res.Resources
+import android.graphics.Typeface
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Handler
 import android.support.v4.content.ContextCompat
-import android.view.View
 import android.widget.RelativeLayout
 import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_game.*
-import android.widget.LinearLayout
 import java.util.*
+import android.view.*
+import android.widget.TextView
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.MobileAds
 
 
 class GameActivity : AppCompatActivity(), View.OnClickListener {
@@ -31,6 +35,7 @@ class GameActivity : AppCompatActivity(), View.OnClickListener {
     var singlePlayer = true
     var widthDisplay : Float = 0f
     var difficultRandom = false
+    val TEST = false
 
     val arrayCheck : Array<Int> = arrayOf(
         20,2,10,0,1,11
@@ -80,8 +85,7 @@ class GameActivity : AppCompatActivity(), View.OnClickListener {
             difficult = Random().nextInt(3)
         }
 
-        Toast.makeText(this, "Difficult: " + difficult, Toast.LENGTH_SHORT).show()
-
+        if (TEST) Toast.makeText(this, "Difficult: " + difficult, Toast.LENGTH_SHORT).show()
 
         square1.setOnClickListener(this)
         square2.setOnClickListener(this)
@@ -96,12 +100,16 @@ class GameActivity : AppCompatActivity(), View.OnClickListener {
         widthDisplay = Resources.getSystem().getDisplayMetrics().widthPixels.toFloat()
         println("widthDisplay: " + widthDisplay)
 
-        val layoutParams = llrow1.getLayoutParams() as LinearLayout.LayoutParams
+        val layoutParams = llrow1.getLayoutParams()
         layoutParams.height = (widthDisplay / 3).toInt()
         layoutParams.width  = widthDisplay.toInt()
         llrow1.setLayoutParams(layoutParams)
         llrow2.setLayoutParams(layoutParams)
         llrow3.setLayoutParams(layoutParams)
+
+        val layoutParamsRelativeLayout = rl_camp.getLayoutParams() as RelativeLayout.LayoutParams
+        layoutParamsRelativeLayout.height = layoutParams.height * 3
+        rl_camp.setLayoutParams(layoutParamsRelativeLayout)
 
         rl_camp.addView(CanvasDraw.DrawCamp1(this, rl_camp, widthDisplay))
 
@@ -121,40 +129,46 @@ class GameActivity : AppCompatActivity(), View.OnClickListener {
             addXorO(square1)
         }
 
+        MobileAds.initialize(this, getString(R.string.admob_code))
+        val adRequest = AdRequest.Builder()
+                //.addTestDevice("B137E9C7BDF0494B7F97E6B2227DC7D1")
+                .build()
+        adView.loadAd(adRequest)
+
+
     }
 
-override fun onClick(v: View) {
-when (v.id) {
-    R.id.square1,
-    R.id.square2,
-    R.id.square3,
-    R.id.square4,
-    R.id.square5,
-    R.id.square6,
-    R.id.square7,
-    R.id.square8,
-    R.id.square9-> {
-        addXorO(v)
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.toolbar_menu, menu)
+        return true
     }
-}
 
-}
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        if(item != null && item.itemId == R.id.action_restart_game){
+            restartGame()
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
+    override fun onClick(v: View) {
+        when (v.id) {
+            R.id.square1,
+            R.id.square2,
+            R.id.square3,
+            R.id.square4,
+            R.id.square5,
+            R.id.square6,
+            R.id.square7,
+            R.id.square8,
+            R.id.square9-> {
+                addXorO(v)
+            }
+        }
+    }
 
     private fun addXorO(v: View) {
         if (gameFinished) {
-            val intent = Intent(this, GameActivity::class.java)
-
-            intent.putExtra("singlePlayer",singlePlayer)
-            intent.putExtra("xFirst",!xFirst)
-            intent.putExtra("playerX",playerX)
-            intent.putExtra("playerO",playerO)
-            intent.putExtra("draw",draw)
-            if(difficultRandom) intent.putExtra("difficult", -1)
-            else intent.putExtra("difficult", difficult)
-
-            startActivity(intent)
-            overridePendingTransition(0, 0)
-            finish()
+            restartGame()
         } else {
             val index: Int = v.tag.toString().toInt()
             val xTurn= (turn % 2 == 0 && xFirst) || (turn % 2 != 0 && !xFirst)
@@ -175,16 +189,21 @@ when (v.id) {
                     val result = checkRow(matrixCheck[index][i]);
                     if (result == 3 || result == 30 ||
                             (i+1 == matrixCheck[index].size && turn == 9)) {
-                        var mex = "Player ";
+                        var mex: String = "";
                         var color = -1
+                        var colorDark = -1
                         if (result == 3) {
                             ++playerX
-                            color = ContextCompat.getColor(this, R.color.orangeDark)
-                            mex += "X won"
+                            color = ContextCompat.getColor(this, R.color.orange)
+                            colorDark = ContextCompat.getColor(this, R.color.orangeDark)
+                            mex = resources.getString(R.string.win_message,
+                                    "X")
                         } else if (result == 30) {
-                            color = ContextCompat.getColor(this, R.color.greenDark)
+                            color = ContextCompat.getColor(this, R.color.greenLight)
+                            colorDark = ContextCompat.getColor(this, R.color.greenDark)
                             ++playerO
-                            mex += "O won"
+                            mex = resources.getString(R.string.win_message,
+                                    "O")
                         } else if (turn == 9) {
                             ++draw
                             mex = "Draw"
@@ -193,17 +212,43 @@ when (v.id) {
                             val array = matrixSinglePlayer[matrixCheck[index][i]]
                             for (i in 0..2){
                                 val id = resources.getIdentifier("square" + (array[i]+1), "id", getPackageName())
-                                (findViewById<View>(id)).setBackgroundColor(color)
+                                val layout:RelativeLayout = (findViewById<View>(id) as RelativeLayout)
+                                layout.setBackgroundColor(colorDark)
+                                if(i == 1){
+                                    val tv_dynamic: TextView = TextView(this)
+                                    tv_dynamic.textSize = 20f
+                                    tv_dynamic.text = "Winner"
+                                    tv_dynamic.background = resources.getDrawable(R.drawable.tv_end_game)//getDrawable(R.drawable.tv_end_game)
+                                    tv_dynamic.setTypeface(Typeface.DEFAULT_BOLD)
+                                    tv_dynamic.setTextColor(color)
+                                    tv_dynamic.textSize = 27f
+                                    // add TextView to LinearLayout
+
+
+                                    Handler().postDelayed({
+                                        layout.addView(tv_dynamic)
+                                        val lp = tv_dynamic.getLayoutParams() as RelativeLayout.LayoutParams
+                                        lp.addRule(RelativeLayout.CENTER_IN_PARENT)
+                                    }, 500)
+                                }
                             }
+                            tvEndGame.setTextColor(color)
+                        }
+                        else{
+                            Handler().postDelayed({
+                                tvEndGame.visibility = View.VISIBLE;
+                                tvEndGame.bringToFront()
+                            }, 500)
                         }
                         tvX.text = if (playerX == 0) "-" else playerX.toString()
                         tvO.text = if (playerO == 0) "-" else playerO.toString()
                         tvDraw.text = if (draw == 0) "-" else draw.toString()
 
+
                         gameFinished = true
 
 
-                        Toast.makeText(this, mex, Toast.LENGTH_SHORT).show()
+                        if (TEST) Toast.makeText(this, mex, Toast.LENGTH_SHORT).show()
                         break
                     }
                     i++
@@ -217,8 +262,8 @@ when (v.id) {
                         rl_score_x.setBackgroundResource(R.drawable.my_border_x)
                     }
                     if (singlePlayer && xTurn && turn < 9) {
-                        if(difficult == 2 && turn == 1 /*&&
-                                arrayCamp[0] + arrayCamp[2] + arrayCamp[6] + arrayCamp[8] == 1*/){
+                        if(difficult == 2 && turn == 1 &&
+                                arrayCamp[4] == 0){
                             val id = resources.getIdentifier("square" + 5, "id", getPackageName())
                             addXorO(findViewById<View>(id))
                         } else {
@@ -273,6 +318,22 @@ when (v.id) {
                 }
             }
         }
+    }
+
+    private fun restartGame() {
+        val intent = Intent(this, GameActivity::class.java)
+
+        intent.putExtra("singlePlayer", singlePlayer)
+        intent.putExtra("xFirst", !xFirst)
+        intent.putExtra("playerX", playerX)
+        intent.putExtra("playerO", playerO)
+        intent.putExtra("draw", draw)
+        if (difficultRandom) intent.putExtra("difficult", -1)
+        else intent.putExtra("difficult", difficult)
+
+        startActivity(intent)
+        overridePendingTransition(0, 0)
+        finish()
     }
 
     fun checkRow(n: Int): Int {

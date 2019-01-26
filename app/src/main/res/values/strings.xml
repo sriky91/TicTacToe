@@ -10,4 +10,17 @@
     <string name="x">X</string>
     <string name="O">O</string>
     <string name="xo">XO</string>
+
+    <string name="draw">Draw</string>
+    <string name="win_message">%s Won</string>
+    <string name="restart_game">Restart game</string>
+
+
+    <string name="admob_code">ca-app-pub-8190330731443650~6861232108</string>
+    <string name="admob_code_banner">ca-app-pub-8190330731443650/1100928527</string>
+
+    <string name="admob_code_test">ca-app-pub-3940256099942544~3347511713</string>
+    <string name="admob_code_banner_test">ca-app-pub-3940256099942544/6300978111</string>
+
+
 </resources>

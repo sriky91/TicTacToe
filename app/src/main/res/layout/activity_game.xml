@@ -1,18 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".GameActivity"
-    android:id="@+id/layout1"
     android:baselineAligned="false"
-    android:orientation="vertical"
     android:background="@color/background"
+    android:gravity="center_horizontal"
     >
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="60dp"
+        android:layout_height="75dp"
         android:orientation="horizontal"
         android:padding="10dp"
         >
@@ -106,110 +105,148 @@
                 android:textSize="27sp"/>
         </RelativeLayout>
     </LinearLayout>
+
     <RelativeLayout
         android:id="@+id/rl_camp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
+        android:layout_centerVertical="true"
         >
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             >
+
             <LinearLayout
                 android:id="@+id/llrow1"
                 android:layout_width="match_parent"
                 android:layout_height="120dp"
                 android:orientation="horizontal"
                 >
+
                 <RelativeLayout
+                    android:id="@+id/square1"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:id="@+id/square1"
                     android:tag="0"
                     >
                 </RelativeLayout>
+
                 <RelativeLayout
+                    android:id="@+id/square2"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:id="@+id/square2"
                     android:tag="1"
                     >
                 </RelativeLayout>
+
                 <RelativeLayout
+                    android:id="@+id/square3"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:id="@+id/square3"
                     android:tag="2"
                     >
                 </RelativeLayout>
             </LinearLayout>
+
             <LinearLayout
                 android:id="@+id/llrow2"
                 android:layout_width="match_parent"
                 android:layout_height="120dp"
                 android:orientation="horizontal"
                 >
+
                 <RelativeLayout
+                    android:id="@+id/square4"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:id="@+id/square4"
                     android:tag="3"
                     >
                 </RelativeLayout>
+
                 <RelativeLayout
+                    android:id="@+id/square5"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:id="@+id/square5"
                     android:tag="4"
                     >
+
+                    <TextView
+                        android:id="@+id/tvEndGame"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:background="@drawable/tv_end_game"
+                        android:gravity="center"
+                        android:text="@string/draw"
+                        android:textColor="@color/white"
+                        android:textSize="30sp"
+                        android:textStyle="bold"
+                        android:visibility="gone"
+                        />
                 </RelativeLayout>
+
                 <RelativeLayout
+                    android:id="@+id/square6"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:id="@+id/square6"
                     android:tag="5"
                     >
                 </RelativeLayout>
             </LinearLayout>
+
             <LinearLayout
                 android:id="@+id/llrow3"
                 android:layout_width="match_parent"
                 android:layout_height="120dp"
                 android:orientation="horizontal"
                 >
+
                 <RelativeLayout
+                    android:id="@+id/square7"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:id="@+id/square7"
                     android:tag="6"
                     >
                 </RelativeLayout>
+
                 <RelativeLayout
+                    android:id="@+id/square8"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:id="@+id/square8"
                     android:tag="7"
                     >
                 </RelativeLayout>
+
                 <RelativeLayout
+                    android:id="@+id/square9"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:id="@+id/square9"
                     android:tag="8"
                     >
                 </RelativeLayout>
             </LinearLayout>
         </LinearLayout>
     </RelativeLayout>
-</LinearLayout>
+    <com.google.android.gms.ads.AdView
+        xmlns:ads="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/adView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"
+        ads:adSize="BANNER"
+        ads:adUnitId="@string/admob_code_banner">
+    </com.google.android.gms.ads.AdView>
+</RelativeLayout>
